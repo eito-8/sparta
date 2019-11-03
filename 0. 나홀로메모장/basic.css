@@ -1,0 +1,18 @@
+            * {
+                font-family: 'Nanum Brush Script', cursive;
+                font-size: 30px;
+            }
+
+            body {
+                background-color: green;
+                color: orange;
+
+            }
+            .mytitle {
+                color: blue;
+                text-decoration: none;
+            }
+            #button {
+                background-color: yellow;
+                color: red;
+            }

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>안녕하세요!</title>
+    <style type="text/css">
+      .table>tbody>tr>td, .table>tfoot>tr>td{
+                vertical-align: middle;
+            }
+            @media screen and (max-width: 600px) {
+                table#cart tbody td .form-control{
+                width:20%;
+                display: inline !important;
+              }
+              .actions .btn{
+                width:36%;
+                margin:1.5em 0;
+              }
+              .actions .btn-info{
+                float:left;
+              }
+              .actions .btn-danger{
+                float:right;
+              }
+              table#cart thead { display: none; }
+              table#cart tbody td { display: block; padding: .6rem; min-width:320px;}
+              table#cart tbody tr td:first-child { background: #333; color: #fff; }
+              table#cart tbody td:before {
+                content: attr(data-th); font-weight: bold;
+                display: inline-block; width: 8rem;
+              }
+              table#cart tfoot td{display:block; }
+              table#cart tfoot td .btn{display:block;}
+            }
+            .extendable:focus {
+                        position: absolute;
+                        width: 110%;
+                        top: -1rem;
+                    }
+    </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+              function order() {
+                let name = $('#order_name').val();
+                let count = $('#order_count').val();
+                let address = $('#order_address').val();
+                let phone = $('#order_phone').val();
+                let item = '돼지갈비';
+
+                $.ajax({
+                  type: "POST",
+                  url: "http://spartacodingclub.shop/order",
+                  data: {
+                    name_give:name,
+                    count_give:count,
+                    address_give:address,
+                    phone_give:phone,
+                    item_give:item
+                },
+                  success: function(response){
+                    if(response['result'] == 'success'){
+                      alert('정상적으로 주문이 완료되었습니다!');
+                      window.location.reload();
+                    } else {
+                        alert('주문이 실패하였습니다.')
+                    }
+                  }
+                })
+              }
+
+              $(document).ready(function(){
+                $('#orders-box').html('');
+                listing();
+              });
+
+              function listing() {
+                $.ajax({
+                  type: "GET",
+                  url: "http://spartacodingclub.shop/order?item_give=돼지갈비",
+                  data: {},
+                  success: function(response){
+                     if (response['result'] == 'success') {
+                       let orders = response['orders'];
+                       for (let a = 0; a < orders.length; a++) {
+                         make_List(orders[a]['item'],orders[a]['name'],orders[a]['count'],orders[a]['address'],orders[a]['phone'])
+                       }
+                     } else {
+                       alert('문제가 발생되었습니다.');
+                     }
+                  }
+                })
+              }
+
+              function make_List(item,name,count,address,phone) {
+                let temp_html = '<tr>\
+                    <td>'+item+'</td>\
+                    <td>'+name+'</td>\
+                    <td>'+count+'</td>\
+                    <td>'+address+'</td>\
+                    <td>'+phone+'</td>\
+                  </tr>';
+                $('#orders-box').append(temp_html);
+             }
+/*
+            function total_Sum() {
+                let price = $('#price').val()
+                let quantity = $('#order_count').val()
+                let total_price = price * quantity
+
+                document.getElementById('total_price1').innerText = total_price
+                document.getElementById('total_price2').innerText = total_price
+            }
+*/
+    </script>
+  </head>
+  <body>
+          <table id="cart" class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                      <th style="width:50%">상품</th>
+                      <th style="width:10%">가격</th>
+                      <th style="width:8%">수량</th>
+                      <th style="width:22%" class="text-center">총액</th>
+                      <th style="width:10%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-th="Product">
+                        <div class="row">
+                          <div class="col-sm-2 hidden-xs"><img src="http://image.auction.co.kr/itemimage/13/a6/d7/13a6d78bf6.jpg"  style="width: 85px; height:85px" class="img-responsive"/></div>
+                          <div class="col-sm-9">
+                            <h4 class="nomargin">프리미엄 돼지갈비 100g</h4>
+                            <p>엄선한 질 좋은 갈비 부위를 통으로 썰어 먹기 좋게 하나 하나 포를 뜬 프리미엄 돼지갈비입니다.</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td id="price" data-th="Price">10,000,00</td>
+                      <td data-th="Quantity">
+                        <input id="order_count" type="number" class="form-control text-center" value="1">
+                      </td>
+                      <td data-th="Subtotal" class="text-center">10,000.00</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="visible-xs">
+                      <td class="text-center" id="total_price1"><strong>￦10,000.00</strong></td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" class="hidden-xs"></td>
+                      <td class="hidden-xs text-center" id="total_price2"><strong>￦10,000.00</strong></td>
+                      <td class="order">
+                        <button onclick="order()" class="btn btn-success btn-block">주문하기 <i class="fa fa-angle-right"></i></button>
+                      </td>
+                    </tr>
+                  </tfoot>
+            </table>
+            <form class="form-compact" action="">
+            <div class="row paddingBottom20">
+                <div class="container col-3">
+                    <div class="row">
+                        <h6 class="text-center col-12 mb-0">주문자정보입력</h6>
+                        <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
+                    </div>
+                    <div class="dropdown-divider mb-3"></div>
+                    <div class="form-group row">
+                        <label for="Name" class="col-4 col-form-label-sm text-right">주문자이름:</label>
+                        <div class="col-8">
+                            <div class="input-group">
+                                <input id="oerder_name" name="text" type="text" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group row align-items-center">
+                        <label for="Address" class="col-4 col-form-label-sm text-right">배송 주소:</label>
+                         <div class="col-8">
+                           <div class="input-group">
+                            <input id="order_address" name="text" type="text" class="form-control form-control-sm extendable">
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label for="cell" class="col-4 col-form-label-sm text-right">전화 번호:</label>
+                        <div class="col-8">
+                          <div class="input-group">
+                            <input id="order_phone" name="text" type="number" class="form-control form-control-sm">
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="orders">
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">상품 이름</th>
+            <th scope="col">주문자 이름</th>
+            <th scope="col">수량</th>
+            <th scope="col">주문자 주소</th>
+            <th scope="col">주문자 전화번호</th>
+          </tr>
+        </thead>
+        <tbody id="orders-box">
+          <tr>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    </div>
+
+
+  </body>
+</html>
